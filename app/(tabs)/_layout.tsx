@@ -74,6 +74,21 @@ export default function RootLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="testPage"
+          options={{
+            title: "Test",
+            tabBarLabel: "Test", // 👈 wichtig!
+            headerShown: false, // <-- Das hier blendet die obere Leiste aus!
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? "beer" : "beer-outline"}
+                color={color}
+                size={30}
+              />
+            ),
+          }}
+        />
       </Tabs>
     </AudioProvider>
   );

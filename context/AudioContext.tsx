@@ -7,10 +7,17 @@ export type RecordingItem = {
   uri: string;
   name: string;
 };
+type DiaryEntry = {
+  uri: string;
+  name: string;
+  date: Date;
+  formattedDate: string;
+};
+
 // Typ für den Context
 type AudioContextType = {
-  recordings: RecordingItem[];
-  addRecording: (recording: RecordingItem) => void;
+  recordings: DiaryEntry[];
+  addRecording: (recording: DiaryEntry) => void;
   deleteRecording: (uri: string) => void;
 };
 
@@ -19,9 +26,9 @@ const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
 // Provider-Komponente, die du in deiner App um die Navigation legst
 export const AudioProvider = ({ children }: { children: ReactNode }) => {
-  const [recordings, setRecordings] = useState<RecordingItem[]>([]);
+  const [recordings, setRecordings] = useState<DiaryEntry[]>([]);
 
-  const addRecording = (recording: RecordingItem) => {
+  const addRecording = (recording: DiaryEntry) => {
     setRecordings((prev) => [...prev, recording]);
   };
 

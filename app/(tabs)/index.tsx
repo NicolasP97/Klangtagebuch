@@ -16,6 +16,13 @@ import { useAudioPlayer } from "expo-audio";
 
 import AnimatedCountdownCircle from "../components/animatedCountdownCircle";
 
+// Typ für eine einzelne Tagebuch-Eintragung
+type DiaryEntry = {
+  uri: string; // Pfad zur Audiodatei (z. B. FileSystem-Dokumentverzeichnis)
+  name: string; // Dateiname (z. B. "aufnahme-1685784320000.m4a")
+  date: Date; // Exaktes Datum der Aufnahme
+  formattedDate: string; // Schön formatierter String, z. B. "03. Juni 2025"
+};
 export default function App() {
   const [alreadySaved, setAlreadySaved] = useState<boolean>(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -23,6 +30,7 @@ export default function App() {
   const [startTimer, setStartTimer] = useState<boolean>(false);
   const [destinationURI, setDestinationURI] = useState<string | null>(null);
   const [filename, setFilename] = useState("");
+  const [testRecording, setTestRecording] = useState<DiaryEntry[]>();
 
   const { addRecording } = useAudio();
   const { recordings, deleteRecording } = useAudio();
@@ -74,12 +82,27 @@ export default function App() {
 
       setDestinationURI(destURI);
       setFilename(newFilename);
-      addRecording({ uri: destURI, name: newFilename });
+      // addRecording({ uri: destURI, name: newFilename });
 
       console.log("Gespeichert:", destURI);
     } catch (err) {
       console.error("Fehler beim Speichern:", err);
     }
+
+    const newEntry: DiaryEntry = {
+      uri: destURI,
+      name: newFilename,
+      date: new Date(),
+      formattedDate: new Date().toLocaleDateString("de-DE", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }),
+    };
+    addRecording(newEntry);
+    setTestRecording([newEntry]);
+
+    console.log("newEntry: ", newEntry);
   };
 
   const handleRetry = async () => {
@@ -92,7 +115,7 @@ export default function App() {
     }
     setDestinationURI(null);
     setSoundRecorded(false);
-    console.log("Timer abgelaufen!");
+    console.log("Retry clicked!");
   };
 
   const handleAccept = async () => {
@@ -117,7 +140,7 @@ export default function App() {
         style={styles.background}
       />
       <AnimatedCountdownCircle
-        duration={5}
+        duration={7}
         start={startTimer}
         radius={120}
         onFinish={handleFinish}
@@ -140,7 +163,7 @@ export default function App() {
       <View style={styles.playButtonContainer}>
         <TouchableOpacity
           style={styles.confirmationButtons}
-          onPress={playSound}
+          onPress={soundRecorded ? playSound : () => {}}
         >
           <LinearGradient
             // Background Linear Gradient
@@ -172,7 +195,7 @@ export default function App() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.confirmationButtons}
-          onPress={handleAccept}
+          onPress={soundRecorded ? handleAccept : () => {}}
         >
           <LinearGradient
             // Background Linear Gradient
@@ -198,11 +221,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   background: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    height: "100%",
+    ...StyleSheet.absoluteFillObject,
   },
   recordButton: {
     top: "20%",

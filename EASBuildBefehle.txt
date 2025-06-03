@@ -1,0 +1,8 @@
+1) Development build: eas build --platform android --profile development
+
+2) Preview Build (standalone apk): eas build --platform android --profile preview
+
+3) Production Build (standalone apk): eas build --platform android --profile production
+
+WICHITIG:
+Fix outdated dependencies: npx expo install --check
